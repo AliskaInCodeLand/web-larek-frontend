@@ -7,7 +7,7 @@ interface IProduct{
     price: number | null;
 }
 
-interface IUser{
+interface Order{
     payment: TUserPayment;
     email: string;
     phone: string;
@@ -27,7 +27,6 @@ interface IBasket {
 
 
 
-
 //Типы для товаров
 
 // Основные данные карточки, которые отображаются на главной странице
@@ -40,10 +39,10 @@ export type TProductBasket = Pick<IProduct, 'title'  |'price'>;
 //Типы для форм
 
 // Данные пользователя в форме способа оплаты
-export type TUserPurchase = Pick<IUser, 'payment' | 'adress'>;
+export type TUserPurchase = Pick<Order, 'payment' | 'adress'>;
 
 // Данные пользователя в форме контактов
-export type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
+export type TUserInfoContacts = Pick<Order, 'email' | 'phone'>;
 
 
 
@@ -68,7 +67,7 @@ export interface ICatalogModel{
 //интерфейс для модели данных, которая будет хранить пользовательские и работать с ними. 
 export interface IUserData {
     getUserInfo(): TProductBasket;
-    setUserInfo(userData: IUser): void;
+    setUserInfo(userData: Order): void;
     checkValidation(data: Record<keyof TProductBasket, string>): boolean;
 }
 

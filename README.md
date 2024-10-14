@@ -64,7 +64,7 @@ interface IProduct{
 Пользователь
 
 ```
-export interface IUser{
+export interface Order{
     payment: string;
     email: string;
     phone: string;
@@ -113,7 +113,7 @@ interface ICatalogModel{
 ```
 interface IUserModel {
     getUserInfo(): TUserBasket;
-    setUserInfo(userData: IUser): void;
+    setUserInfo(userData: Order): void;
     checkValidation(data: Record<keyof TUserBasket, string>): boolean;
 }
 
@@ -141,13 +141,13 @@ type TProductInfo = Pick<IProduct, 'category' |'title' |'image' |'price'>;
 Данные пользователя в форме способа оплаты
 
 ```
-type TUserPurchase = Pick<IUser, 'payment' | 'adress'>;
+type TUserPurchase = Pick<Order, 'payment' | 'adress'>;
 ```
 
 Данные пользователя в форме контактов
 
 ```
-type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
+type TUserInfoContacts = Pick<Order, 'email' | 'phone'>;
 
 ```
 
@@ -194,7 +194,8 @@ type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
 - addProduct(product: IProduct): void - добавляет один продукт в начало массива и вызывает событие изменения массива
 - removeProduct(productId: string): void; - удаляет продукт из массива и вызывает событие изменения массива.
 - getProduct(productId: string): IProduct; - возвращает продукт по его id
-- deleteProducts(products: IProduct[]): void - отчищяет массив всех продуктов
+- clearBasket(products: IProduct[]): void - отчищяет массив всех продуктов
+- isBasket(): boolean - метод возвращает наличие товара в корзине пользователя
 - getCatalog(): IProduct[]; - возвращает массив всех продуктов
 - а так-же сеттеры и геттеры для сохранения и получения данных из полей класса
 
@@ -232,7 +233,7 @@ type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
 Так же класс предоставляет набор методов для взаимодействия с этими данными.
 
 - getUserInfo(): TUserBasket - возвращает основные данные заказа пользователя отображаемые на сайте
-- setUserInfo(userData: IUser): void - сохраняет данные пользователя в классе
+- setUserInfo(userData: Order): void - сохраняет данные пользователя в классе
 - checkValidation(data: Record<keyof TUserBasket, string>): boolean - проверяет объект с данными закза пользоователя на валидность
 
 ### Классы представления
@@ -250,9 +251,9 @@ type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
 - modal: HTMLElement - элемент модального окна
 - events: IEvents - брокер событий
 
-#### Класс ModalWithConfirm
+#### Класс ModalSuccess
 
-Расширяет класс Modal. Предназначен для реализации модального окна подтверждения заказа. При открытии модального окна сохраняет полученный в параметрах обработчик, который передается для выполнения при сабмите формы.\
+Расширяет класс Modal.Предназначен для реализации модального окна, сообщающего об успешном оформлении заказа. При закрытии модального окна отчищает корзину.\
 Поля класса:
 
 - submitButton: HTMLButtonElement - Кнопка подтверждения
@@ -303,8 +304,7 @@ type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
 Поля класса содержат элементы разметки элементов карточки. Конструктор, кроме темплейта принимает экземпляр `EventEmitter` для инициации событий.\
 Методы:
 
-- setData(productData: IProduct, userBasket: IProduct[]): void - заполняет атрибуты элементов товара данными, а так-же управляет отображением кнопки "Добавить в корзину". Если товар уже есть в корзине, то кнопка становится неактивной.
-- isBasket(): boolean - метод возвращает наличие товара в корзине пользователя
+- setData(productData: IProduct): void - заполняет атрибуты элементов товара данными.
 - геттер id возвращает уникальный id карточки
 
 #### Класс ProductsContainer
@@ -320,8 +320,7 @@ type TUserInfoContacts = Pick<IUser, 'email' | 'phone'>;
 Методы:
 
 - setUserBasket(userData: TUserPublicInfo): void - устанавливает данные в элементы разметки блока
-- deleteProduct(): void - метод для удаления разметки карточки в корзине
-- 
+- renderBasket(): void - метод для обновления разметки карточки в корзине
 
 ### Слой коммуникации
 
