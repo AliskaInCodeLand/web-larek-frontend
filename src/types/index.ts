@@ -1,73 +1,43 @@
-interface IProduct{
+// Товар
+export interface IProduct{
     id: string;
-    description: string;
     image: string;
     title: string;
+    description: string;
     category: string;
     price: number | null;
 }
 
-interface Order{
-    payment: TUserPayment;
+export type TProductBasket = Pick< IProduct, 'title'  |'price'>;
+
+export interface IAppState {
+    catalog: IProduct[];
+    basket: IProduct[];
+    preview: string | null;
+    order: IOrder | null;
+}
+
+export interface IOrderForm {
+    payment: string;
+    address: string;
+}
+
+export interface IContactsForm {
     email: string;
     phone: string;
-	adress: string;
-	total: number| null;
-    items: IProduct[];
 }
 
-type TBasketProducts = Pick<IBasket, 'items'>;
+export type IOrder =  IOrderForm & IContactsForm & {items: string[], total: number};
 
-type TUserPayment = 'cash' | 'card';
+export type ContactsFormErrors = Partial<Record<keyof IContactsForm, string>>;
 
-interface IBasket {
-    items: IProduct[];
-    
+export type OrderFormErrors = Partial<Record<keyof IOrderForm, string>>;
+
+export type FormErrors = ContactsFormErrors & OrderFormErrors;
+
+export type TUserPayment = 'cash' | 'card';
+
+export interface IOrderResult {
+    id: string[];
+    total: number;
 }
-
-
-
-//Типы для товаров
-
-// Основные данные карточки, которые отображаются на главной странице
-export type TProductInfo = Pick<IProduct, 'category' |'title' |'image' |'price'>;
-
-// Данные карточки, которые отображаются в корзине
-export type TProductBasket = Pick<IProduct, 'title'  |'price'>;
-
-
-//Типы для форм
-
-// Данные пользователя в форме способа оплаты
-export type TUserPurchase = Pick<Order, 'payment' | 'adress'>;
-
-// Данные пользователя в форме контактов
-export type TUserInfoContacts = Pick<Order, 'email' | 'phone'>;
-
-
-
-//интерфейс для модели данных, которая будет хранить карточки корзины и работать с ними. 
-export interface IBasketModel {
-    //массив с товарами который выбрал покупатель
-    items: IProduct[];
-    getBasketProduct(productId: string): IProduct;
-    getCatalog(): IProduct[];
-    addProduct(product: IProduct): void;
-    removeProduct(productId: string): void;
-    deleteProducts(products: IProduct[]): void;
-}
-
-//интерфейс для модели данных, которая будет хранить все карточкии работать с ними.
-export interface ICatalogModel{
-    items: IProduct[];
-    getProduct(productId: string): IProduct;
-    getCatalog(): IProduct[];
-}
-
-//интерфейс для модели данных, которая будет хранить пользовательские и работать с ними. 
-export interface IUserData {
-    getUserInfo(): TProductBasket;
-    setUserInfo(userData: Order): void;
-    checkValidation(data: Record<keyof TProductBasket, string>): boolean;
-}
-
