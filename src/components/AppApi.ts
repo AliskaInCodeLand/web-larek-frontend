@@ -34,11 +34,10 @@ export class AuctionAPI extends Api implements IProductAPI {
         );
     }
 
-    orderProducts(order: IOrder, total: number): Promise<IOrderResult> {
-        order.total = total;
+    orderProducts(order: IOrder): Promise<IOrderResult> {
         console.log(order);
         return this.post('/order', order).then(
-            (data: IOrderResult) => {console.log(data);
+            (data: IOrderResult) => {console.log('data');
                 return data}
         );
     }

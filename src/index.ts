@@ -44,7 +44,12 @@ const page = new Page(document.querySelector('.page__wrapper') as HTMLElement, e
 const modal = new Modal(document.querySelector('#modal-container') as HTMLElement, events);
 
 const basket = new Basket(cloneTemplate(basketTemplate), events);
-
+const success = new Success(cloneTemplate(successTemplate), {
+    onClick: () => {
+        appData.clearBasket();
+        modal.close();
+    }
+});
 
 // Изменение элементов каталога
 events.on<CatalogChangeEvent>('items:changed', () => {
@@ -115,26 +120,26 @@ events.on('basket:open', () => {
             basket.render())})
 });
 
-events.on('basket:changed', (item: IProduct) => {
-    const itemsHTMLArray = appData.getBasket().map(item =>{
-        let bag = new BasketItem(cloneTemplate(cardBasketTemplate),{onClick: () => events.emit('basket:delete', item)})
-        bag.count = appData.getBasket().indexOf(item) + 1; 
+events.on('basket:changed', () => {
 
-        return bag.render(item)
+    const itemsHTMLArray = appData.getBasket().map((id, index) =>{
+        let bag = new BasketItem(cloneTemplate(cardBasketTemplate),
+        {onClick: () => events.emit('basket:delete', {id: id})})
+        bag.count = index + 1; 
+
+        return bag.render(appData.getItem(id))
     })
 
-    basket.render({
-        items: itemsHTMLArray,
-        total: appData.getTotal(),
-    })
+    basket.items = itemsHTMLArray;
+    basket.total = appData.getTotal();
 
-    page.counter = appData.basket.length;
+    page.counter = appData.getBasket().length;
 });
 
 
 
-events.on('basket:delete', (item: IProduct) => {
-    appData.removeItem(item);
+events.on('basket:delete', (data:{id: string}) => {
+    appData.removeItem((data.id));
 });
 
 events.on('order:open', () => {
@@ -195,20 +200,16 @@ events.on(/^contacts\..*:change/, (data: { field: keyof IContactsForm, value: st
 
 // Отправлена форма заказа
 events.on('contacts:submit', () => {
-    api.orderProducts(appData.order, appData.getTotal())
+    api.orderProducts(appData.order)
         .then((result) => {
-            const success = new Success(cloneTemplate(successTemplate), {
-                onClick: () => {
-                    modal.close();
-                    appData.clearBasket();
-                }
-            });
-
             modal.render({
                 content: success.render({
-                    total: appData.getTotal(),
+                    total: result.total,
                 })
+                
             });
+            appData.clearBasket();
+            basket.render()
         })
         .catch(err => {
             console.error(err);

@@ -35,9 +35,7 @@ export type OrderFormErrors = Partial<Record<keyof IOrderForm, string>>;
 
 export type FormErrors = ContactsFormErrors & OrderFormErrors;
 
-export type TUserPayment = 'cash' | 'card';
-
 export interface IOrderResult {
-    id: string[];
+    items: string[];
     total: number;
 }

@@ -7,7 +7,6 @@ export type CatalogChangeEvent = {
 
 export class AppState extends Model<IAppState> {
 
-    basket:  IProduct[]=[];
     catalog: IProduct[];
     order: IOrder = {
         payment: "",
@@ -41,31 +40,28 @@ export class AppState extends Model<IAppState> {
 
     addItem(item:  IProduct){
         if(item.price !== null){
-            this.basket.push(item);
             this.order.items.push(item.id);
         }
         this.emitChanges('basket:changed', item);
     }
 
-    removeItem(item:  IProduct){
-        this.basket = this.basket.filter(it => it.id !== item.id);
-        this.order.items = this.order.items.filter(it => it !== item.id);
+    removeItem(item:  string){
+        this.order.items = this.order.items.filter(it => it !== item);
 
-        this.emitChanges('basket:changed', item);
-    }
-
-    getBasketItem(id: string): IProduct{   
-        return this.basket.find(item => item.id === id);
-        
+        this.emitChanges('basket:changed', this.catalog.filter(it => it.id === item));
     }
 
     getTotal() {
-        let result = this.basket.reduce((a, c) => a + this.basket.find(it => it.id === c.id).price, 0);
-        return result;
+        let count = 0;
+        for ( let i = 0; i < this.order.items.length; i++){
+            count += this.catalog.find(card => card.id === this.order.items[i]).price
+        }
+        this.order.total = count;
+        return this.order.total;
     }
 
-    getBasket(): IProduct[]{
-        return this.basket;
+    getBasket(): string[]{
+        return this.order.items;
     }
 
     setOrderField(field: keyof IOrderForm, value: string) {
@@ -107,12 +103,15 @@ export class AppState extends Model<IAppState> {
     }
 
     isItemInBasket(id:string):boolean{
-        return this.basket.some(item => item.id === id);
+        return this.order.items.some(item => item === id);
     }
 
     clearBasket() {
-        this.basket.forEach(item => {
-            this.removeItem(item);
-        });
+        this.order.items = [];
+        this.order.address = '';
+        this.order.email = '';
+        this.order.payment = '';
+        this.order.phone = '';
+        this.emitChanges('basket:changed', this.order.items);
     }
 }

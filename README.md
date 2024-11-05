@@ -129,13 +129,6 @@ export interface IOrderResult {
 export type FormErrors = ContactsFormErrors & OrderFormErrors;
 ```
 
-Способ оплаты
-
-```
-export type TUserPayment = 'cash' | 'card';
-
-```
-
 
 ## Архитектура приложения
 
@@ -179,7 +172,6 @@ export type TUserPayment = 'cash' | 'card';
 
 В полях класса хранятся следующие данные:
 
-- basket:  IProduct[] - массив объектов карточек с товарами в корзине
 - catalog: IProduct[] - массив объектов карточек с товарами
 - order: IOrder - заказ для отправки на сервер
 - events: IEvents - экземпляр класса `EventEmitter` для инициации событий при изменении данных.
@@ -189,10 +181,9 @@ export type TUserPayment = 'cash' | 'card';
 - getItem(id: string): IProduct - метод получения массива объектов карточек с товарами.
 - setPreview(item: IProduct) - метод сохранения выбранной карточки для детального просмотра.
 - addItem(item:  IProduct) - метод добавления карточки в корзину.
-- removeItem(item:  IProduct) - метод удаления карточки из корзины.
-- getBasketItem(id: string): IProduct - метод получения карточки из корзины для блокировки их повторного добавления.
+- removeItem(item:  string) - метод удаления карточки из корзины.
 - getTotal() - метод получения общей стоимости карточек в корзине.
-- getBasket(): IProduct[] - метод получения карточки из корзины.
+- getBasket(): string[] - метод получения карточки из корзины.
 - setOrderField(field: keyof IOrderForm, value: string) - метод сохранения данных с 1-ой формы заказа.
 - validateOrder() - метод проверки введённых данных в первую форму.
 - setContactsField(field: keyof IContactsForm, value: string) - метод сохранения данных с формы с контакной информацией.
